@@ -1,7 +1,11 @@
 # Arch Linux Dev Container
 # Used for working on most of my projects
 #
-# Build with `docker build -t archlinux-dev:latest .`
+# Build local with `docker build -t archlinux-dev:latest .`
+# Build remote with `docker build -t archlinux-dev:latest https://raw.githubusercontent.com/overshard/dockerfiles/master/dev/Dockerfile`
+#
+# Create volumes with `docker volume create --name home-code` and `docker volume create --name home-code`
+# Run container with volumes `docker run --detach --restart always --name home-container --volume home-code:/home/dev/code --volume home-ssh:/home/dev/.ssh alpinelinux-dev:latest`
 
 FROM archlinux:latest
 
@@ -9,7 +13,7 @@ FROM archlinux:latest
 # Install packages
 
 RUN pacman --sync --refresh --noconfirm \
-        git curl openssh neovim chromium supervisor \
+        git curl openssh neovim chromium \
         noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
         postgresql postgresql-libs \
@@ -24,6 +28,34 @@ RUN sudo -iu postgres initdb -D /var/lib/postgres/data && \
     sudo -iu postgres pg_ctl start -D /var/lib/postgres/data && \
     sudo -iu postgres createuser -s dev && \
     sudo -iu postgres pg_ctl stop -D /var/lib/postgres/data
+
+
+# Set up supervisor to run our services
+
+RUN echo $'# supervisor\n\
+[supervisord]\n\
+pidfile=/run/supervisord.pid\n\
+user=root\n\
+nodaemon=true\n\
+logfile=/dev/null\n\
+logfile_maxbytes=0\n\
+# postgresql\n\
+[program:postgresql]\n\
+command=/usr/bin/postgres -D /var/lib/postgres/data\n\
+autostart=true\n\
+user=postgres\n\
+stdout_logfile=/dev/fd/1\n\
+stdout_logfile_maxbytes=0\n\
+redirect_stderr=true\n\
+# redis\n\
+[program:redis]\n\
+command=/usr/bin/redis-server\n\
+autostart=true\n\
+user=redis\n\
+stdout_logfile=/dev/fd/1\n\
+stdout_logfile_maxbytes=0\n\
+redirect_stderr=true\n\
+' >> /etc/supervisord.conf && chmod 600 /etc/supervisord.conf
 
 
 # Setup a symbolic link to maintain cross platform compatibility with chromium
@@ -54,9 +86,11 @@ SHELL ["/bin/bash", "-l", "-i", "-c"]
 
 RUN curl -o- https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
 
-RUN echo $'export PYENV_ROOT="$HOME/.pyenv"\n\
+RUN echo $'# pyenv\n\
+export PYENV_ROOT="$HOME/.pyenv"\n\
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"\n\
-eval "$(pyenv init -)"' >> ~/.bashrc
+eval "$(pyenv init -)"\n\
+' >> ~/.bashrc
 
 RUN pyenv install 3.10.4 && \
     pyenv global 3.10.4 && \
@@ -65,15 +99,13 @@ RUN pyenv install 3.10.4 && \
         pipenv \
         black \
         isort \
-        flake8
+        flake8 \
+        supervisor
 
 
 # Install node and system packages
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-
-RUN echo $'export NVM_DIR="$HOME/.nvm"\n\
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
 
 RUN nvm install --lts=fermium && \
     npm i -g \
@@ -86,16 +118,11 @@ RUN nvm install --lts=fermium && \
         heroku
 
 
-# Set up supervisor to run our services
+# Add my dotfiles
 
-RUN echo $'[program:postgresql]\n\
-command=/usr/bin/postgres -D /var/lib/postgres/data\n\
-autostart=true\n\
-user=postgres' | sudo tee /etc/supervisor.d/postgresql.ini > /dev/null
+RUN curl -o- https://raw.githubusercontent.com/overshard/dotfiles/master/bootstrap.sh | bash
 
-RUN echo $'[program:redis]\n\
-command=/usr/bin/redis-server\n\
-autostart=true\n\
-user=redis' | sudo tee /etc/supervisor.d/redis.ini > /dev/null
 
-CMD ["sudo", "/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf", "-u", "root"]
+# Run our supervisor services with CMD so we can override if it we want to
+
+CMD ["sudo", "/home/dev/.pyenv/shims/supervisord", "-c", "/etc/supervisord.conf"]
