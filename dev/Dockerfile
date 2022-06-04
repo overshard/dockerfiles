@@ -13,7 +13,7 @@ FROM archlinux:latest
 # Install packages
 
 RUN pacman --sync --refresh --noconfirm \
-        git curl openssh neovim chromium \
+        git curl openssh neovim chromium libwebp \
         noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
         postgresql postgresql-libs \
