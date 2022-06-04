@@ -29,6 +29,11 @@ RUN sudo -iu postgres initdb -D /var/lib/postgres/data && \
 RUN ln -s /usr/bin/chromium /usr/sbin/chromium-browser
 
 
+# Setup our timezone in /etc/timezone to prevent python tz errors
+
+RUN echo UTC > /etc/timezone
+
+
 # Create a user
 
 RUN useradd -m -G wheel -s /bin/bash dev && \
