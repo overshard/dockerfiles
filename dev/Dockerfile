@@ -9,10 +9,11 @@ FROM archlinux:latest
 # Install packages
 
 RUN pacman --sync --refresh --noconfirm \
-        git curl openssh neovim chromium \
+        git curl openssh neovim chromium supervisor \
         noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
-        postgresql postgresql-libs
+        postgresql postgresql-libs \
+        redis
 
 
 # Setup postgresql
@@ -21,7 +22,8 @@ RUN sudo -iu postgres initdb -D /var/lib/postgres/data && \
     mkdir -p /run/postgresql && \
     chown postgres:postgres /run/postgresql && \
     sudo -iu postgres pg_ctl start -D /var/lib/postgres/data && \
-    sudo -iu postgres createuser -s dev
+    sudo -iu postgres createuser -s dev && \
+    sudo -iu postgres pg_ctl stop -D /var/lib/postgres/data
 
 
 # Setup a symbolic link to maintain cross platform compatibility with chromium
@@ -75,15 +77,25 @@ RUN echo $'export NVM_DIR="$HOME/.nvm"\n\
 
 RUN nvm install --lts=fermium && \
     npm i -g \
-        gulp-cli \
-        yarn prettier \
+        yarn \
+        prettier \
         import-sort \
         eslint \
+        gulp-cli \
         vercel \
         heroku
 
 
-# Change our shell back to normal
+# Set up supervisor to run our services
 
-SHELL ["/bin/bash", "-c"]
+RUN echo $'[program:postgresql]\n\
+command=/usr/bin/postgres -D /var/lib/postgres/data\n\
+autostart=true\n\
+user=postgres' | sudo tee /etc/supervisor.d/postgresql.ini > /dev/null
 
+RUN echo $'[program:redis]\n\
+command=/usr/bin/redis-server\n\
+autostart=true\n\
+user=redis' | sudo tee /etc/supervisor.d/redis.ini > /dev/null
+
+CMD ["sudo", "/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf", "-u", "root"]
