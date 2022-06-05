@@ -6,8 +6,8 @@
 # exposed ports, the plugin will auto forward ports that my projects need.
 #
 # Build image:
-#     docker build -t archlinux-dev:latest \
-#         https://raw.githubusercontent.com/overshard/dockerfiles/master/dev/Dockerfile
+#     docker build -t archlinux-webdev:latest \
+#         https://raw.githubusercontent.com/overshard/dockerfiles/master/archlinux-webdev/Dockerfile
 #
 # Create volumes:
 #     docker volume create --name home-code
@@ -16,7 +16,7 @@
 # Start container:
 #     docker run --detach --restart always --name home-container \
 #         --volume home-code:/home/dev/code --volume home-ssh:/home/dev/.ssh \
-#         alpinelinux-dev:latest
+#         alpinelinux-webdev:latest
 #
 # I use a couple of volumes to store my code and SSH keys to make rebuilds of
 # the container easy. I have scripts setup on my hosts to rebuild images, delete
@@ -28,12 +28,15 @@
 
 FROM archlinux:latest
 
+ENV NODE_VERSION=fermium
+ENV PYTHON_VERSION=3.10.4
+
 
 # Install packages
 
 RUN pacman --sync --refresh --noconfirm \
-        git curl openssh neovim chromium libwebp \
-        noto-fonts noto-fonts-extra noto-fonts-emoji \
+        git curl openssh neovim libwebp \
+        chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
         postgresql postgresql-libs \
         redis
@@ -116,8 +119,8 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"\n\
 eval "$(pyenv init -)"\n\
 ' >> ~/.bashrc
 
-RUN pyenv install 3.10:latest && \
-    pyenv global 3.10:latest && \
+RUN pyenv install ${PYTHON_VERSION} && \
+    pyenv global ${PYTHON_VERSION} && \
     pip install --upgrade \
         pip \
         pipenv \
@@ -131,7 +134,8 @@ RUN pyenv install 3.10:latest && \
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-RUN nvm install --lts=fermium && \
+# use ENV to set the version of node to install
+RUN nvm install --lts=${NODE_VERSION} && \
     npm i -g \
         yarn \
         prettier \
