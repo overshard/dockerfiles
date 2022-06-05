@@ -1,11 +1,29 @@
-# Arch Linux Dev Container
-# Used for working on most of my projects
+# archlinux-webdev
 #
-# Build local with `docker build -t archlinux-dev:latest .`
-# Build remote with `docker build -t archlinux-dev:latest https://raw.githubusercontent.com/overshard/dockerfiles/master/dev/Dockerfile`
+# Used for working on most of my website development projects, using a rolling
+# distro to have the latest packages to work with. I generally use this with the
+# "Remote - Containers" plugin from Microsoft on VS Code hence why there are no
+# exposed ports, the plugin will auto forward ports that my projects need.
 #
-# Create volumes with `docker volume create --name home-code` and `docker volume create --name home-code`
-# Run container with volumes `docker run --detach --restart always --name home-container --volume home-code:/home/dev/code --volume home-ssh:/home/dev/.ssh alpinelinux-dev:latest`
+# Build image:
+#     docker build -t archlinux-dev:latest \
+#         https://raw.githubusercontent.com/overshard/dockerfiles/master/dev/Dockerfile
+#
+# Create volumes:
+#     docker volume create --name home-code
+#     docker volume create --name home-ssh
+#
+# Start container:
+#     docker run --detach --restart always --name home-container \
+#         --volume home-code:/home/dev/code --volume home-ssh:/home/dev/.ssh \
+#         alpinelinux-dev:latest
+#
+# I use a couple of volumes to store my code and SSH keys to make rebuilds of
+# the container easy. I have scripts setup on my hosts to rebuild images, delete
+# old containers, and start the new containers when I make updates.
+#
+# The naming is so that I can make a container and volumes for each of my
+# clients and keep a separation of work.
 
 FROM archlinux:latest
 
