@@ -25,6 +25,7 @@
 # The naming is so that I can make a container and volumes for each of my
 # clients and keep a separation of work.
 
+
 FROM archlinux:latest
 
 
@@ -115,8 +116,8 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"\n\
 eval "$(pyenv init -)"\n\
 ' >> ~/.bashrc
 
-RUN pyenv install 3.10.4 && \
-    pyenv global 3.10.4 && \
+RUN pyenv install 3.10:latest && \
+    pyenv global 3.10:latest && \
     pip install --upgrade \
         pip \
         pipenv \
