@@ -30,6 +30,11 @@ RUN sudo -iu postgres initdb -D /var/lib/postgres/data && \
     sudo -iu postgres pg_ctl stop -D /var/lib/postgres/data
 
 
+# Setup redis
+
+RUN sed -i 's/stop-writes-on-bgsave-error yes/stop-writes-on-bgsave-error no/g' /etc/redis/redis.conf
+
+
 # Set up supervisor to run our services
 
 RUN echo $'# supervisor\n\
