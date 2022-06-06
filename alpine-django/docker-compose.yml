@@ -1,0 +1,28 @@
+# alpine-django
+#
+# I create a `.env` file in the same folder as my `Dockerfile` and
+# `docker-compose.yml` file with the environmental variables below. Generally my
+# server file struction is `/srv/git/app` for the git bare repository,
+# `/srv/docker/app` for the git repo cloned from the bare repo, and
+# `/srv/data/app` for the data directory mounted to the container.
+#
+# The ports are `8000:8000` because I often use Caddy or Nginx to reverse proxy
+# to the container. You could probably just serve the app directly though with
+# `8000:80` instead if you have no media files.
+
+version: "3"
+
+services:
+  web:
+    container_name: analytics
+    build: .
+    volumes:
+      - /srv/data/app/:/data/
+    ports:
+      - "8000:8000"
+    command: gunicorn analytics.asgi:application -k uvicorn.workers.UvicornWorker -b :8000 --log-file - --access-logfile - --error-logfile -
+    restart: always
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_BASE_URL: ${DJANGO_BASE_URL}
