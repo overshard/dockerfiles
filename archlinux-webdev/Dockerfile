@@ -76,7 +76,7 @@ stdout_logfile_maxbytes=0\n\
 redirect_stderr=true\n\
 # redis\n\
 [program:redis]\n\
-command=/usr/bin/redis-server\n\
+command=/usr/bin/redis-server /etc/redis/redis.conf\n\
 autostart=true\n\
 user=redis\n\
 stdout_logfile=/dev/fd/1\n\
