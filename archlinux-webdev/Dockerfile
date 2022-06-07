@@ -29,7 +29,7 @@
 FROM archlinux:latest
 
 ENV NODE_VERSION=fermium
-ENV PYTHON_VERSION=3.10.4
+ENV PYTHON_VERSION=3.10.5
 
 
 # Install packages
