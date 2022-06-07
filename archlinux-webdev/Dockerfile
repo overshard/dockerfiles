@@ -52,7 +52,8 @@ RUN sudo -iu postgres initdb -D /var/lib/postgres/data && \
     sudo -iu postgres pg_ctl stop -D /var/lib/postgres/data
 
 
-# Setup redis
+# Setup redis, this mostly is used to fix an error report, I really don't care
+# if redis has issues writing since this image is for development
 
 RUN sed -i 's/stop-writes-on-bgsave-error yes/stop-writes-on-bgsave-error no/g' /etc/redis/redis.conf
 
@@ -86,13 +87,10 @@ redirect_stderr=true\n\
 
 
 # Setup a symbolic link to maintain cross platform compatibility with chromium
+# and set our system timezone to UTC
 
-RUN ln -s /usr/bin/chromium /usr/sbin/chromium-browser
-
-
-# Setup our timezone in /etc/timezone to prevent python tz errors
-
-RUN echo UTC > /etc/timezone
+RUN ln -s /usr/bin/chromium /usr/sbin/chromium-browser && \
+    echo UTC > /etc/timezone
 
 
 # Create a user
