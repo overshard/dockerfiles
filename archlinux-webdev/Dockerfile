@@ -95,7 +95,8 @@ redirect_stderr=true\n\
 
 
 # Setup a symbolic link to maintain cross platform compatibility with chromium
-# and set our system timezone to UTC
+# and set our system timezone to UTC and make heroku available even when nvm
+# is using an older node version
 
 RUN ln -s /usr/bin/chromium /usr/sbin/chromium-browser && \
     echo UTC > /etc/timezone
@@ -140,7 +141,6 @@ RUN pyenv install ${PYTHON_VERSION} && \
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
-# use ENV to set the version of node to install
 RUN nvm install --lts=${NODE_VERSION} && \
     npm i -g \
         yarn \
@@ -150,6 +150,12 @@ RUN nvm install --lts=${NODE_VERSION} && \
         gulp-cli \
         vercel \
         heroku
+
+
+# Add heroku to sbin so we can continue using it while using `nvm use` on a
+# project with a different node version
+
+RUN sudo ln -s `which heroku` /usr/sbin/heroku
 
 
 # Add my dotfiles
