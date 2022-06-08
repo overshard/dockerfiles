@@ -16,11 +16,19 @@
 # Start container:
 #     docker run --detach --restart always --name home-container \
 #         --volume home-code:/home/dev/code --volume home-ssh:/home/dev/.ssh \
+#         --volume /var/run/docker.sock:/var/run/docker.sock \
 #         alpinelinux-webdev:latest
 #
 # I use a couple of volumes to store my code and SSH keys to make rebuilds of
 # the container easy. I have scripts setup on my hosts to rebuild images, delete
 # old containers, and start the new containers when I make updates.
+#
+# Docker is included in this build so I can test docker stuff inside my
+# containers. Note that to get docker to function in a docker container you
+# need to use the host's docker and provide the docker.sock file from the host
+# to the container. This can be done with `--volume /var/run/docker.sock:/var/run/docker.sock`
+# on Linux/MacOS hosts and with `--volume //var/run/docker.sock:/var/run/docker.sock`
+# on Windows hosts.
 #
 # The naming is so that I can make a container and volumes for each of my
 # clients and keep a separation of work.
