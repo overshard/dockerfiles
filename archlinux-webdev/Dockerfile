@@ -94,12 +94,8 @@ redirect_stderr=true\n\
 ' >> /etc/supervisord.conf && chmod 600 /etc/supervisord.conf
 
 
-# Setup a symbolic link to maintain cross platform compatibility with chromium
-# and set our system timezone to UTC and make heroku available even when nvm
-# is using an older node version
-
-RUN ln -s /usr/bin/chromium /usr/sbin/chromium-browser && \
-    echo UTC > /etc/timezone
+# Set our system timezone to UTC to prevent errors
+RUN echo UTC > /etc/timezone
 
 
 # Create a user
