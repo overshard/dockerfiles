@@ -21,7 +21,7 @@ services:
     ports:
       - "8000:8000"
     command: gunicorn analytics.asgi:application -k uvicorn.workers.UvicornWorker -b :8000 --log-file - --access-logfile - --error-logfile -
-    restart: always
+    restart: unless-stopped
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
