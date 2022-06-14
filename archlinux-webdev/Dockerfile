@@ -46,7 +46,7 @@ RUN pacman --sync --refresh --noconfirm \
         git curl openssh neovim libwebp rsync docker \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
-        postgresql postgresql-libs \
+        postgresql postgresql-libs libxcrypt-compat \
         redis
 
 
