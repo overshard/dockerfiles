@@ -45,7 +45,7 @@ ENV PYTHON_VERSION=3.10.5
 RUN pacman --sync --refresh --noconfirm \
         git curl openssh neovim libwebp rsync docker docker-compose whois ldns \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
-        base-devel openssl zlib xz tk \
+        base-devel openssl zlib xz tk python2 \
         postgresql postgresql-libs libxcrypt-compat \
         redis
 
