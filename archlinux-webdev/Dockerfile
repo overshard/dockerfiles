@@ -43,7 +43,7 @@ ENV PYTHON_VERSION=3.10.5
 # Install packages
 
 RUN pacman --sync --refresh --noconfirm \
-        git curl openssh neovim libwebp rsync docker docker-compose \
+        git curl openssh neovim libwebp rsync docker docker-compose whois \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
         postgresql postgresql-libs libxcrypt-compat \
