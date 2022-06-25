@@ -16,7 +16,7 @@ RUN apk add --update --no-cache exim && \
     ln -sf /dev/stdout /var/log/exim/mainlog && \
     ln -sf /dev/stderr /var/log/exim/panic && \
     ln -sf /dev/stderr /var/log/exim/reject && \
-    sed -i 's/^hostlist   relay_from_hosts = localhost/hostlist   relay_from_hosts = 172.16.0.0\/12/' /etc/exim/exim.conf
+    sed -i 's/^hostlist   relay_from_hosts = localhost/hostlist   relay_from_hosts = 192.168.0.0\/16:10.0.0.0\/8:172.16.0.0\/12/' /etc/exim/exim.conf
 
 USER exim
 
