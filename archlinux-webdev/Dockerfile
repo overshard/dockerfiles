@@ -149,9 +149,10 @@ RUN nvm install --lts=${NODE_VERSION} && \
 
 
 # Add heroku to sbin so we can continue using it while using `nvm use` on a
-# project with a different node version
+# project with a different node version. Also add the heroku-builds plugin.
 
-RUN sudo ln -s `which heroku` /usr/sbin/heroku
+RUN sudo ln -s `which heroku` /usr/sbin/heroku && \
+    heroku plugins:install heroku-builds
 
 
 # Add my dotfiles
