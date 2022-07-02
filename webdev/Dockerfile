@@ -39,10 +39,16 @@ ENV NODE_VERSION=fermium
 ENV PYTHON_VERSION=3.10.5
 
 
+# Allow for extracting man pages before installing everything
+
+RUN sed -i 's/^NoExtract  = usr\/share\/man/#NoExtract  = usr\/share\/man/g' /etc/pacman.conf
+
+
 # Install packages
 
 RUN pacman --sync --refresh --noconfirm \
-        git curl openssh neovim libwebp rsync docker docker-compose whois ldns \
+        man-db man-pages git curl openssh neovim libwebp rsync whois ldns \
+        docker docker-compose \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk python2 \
         postgresql postgresql-libs libxcrypt-compat \
