@@ -100,6 +100,7 @@ redirect_stderr=true\n\
 
 
 # Set our system timezone to UTC to prevent errors
+
 RUN echo UTC > /etc/timezone
 
 
