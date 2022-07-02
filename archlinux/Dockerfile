@@ -8,7 +8,7 @@
 #         https://raw.githubusercontent.com/overshard/dockerfiles/master/archlinux/Dockerfile
 #
 # Start container:
-#     docker run --detach --restart unless-stopped --name archlinux-container \
+#     docker run --detach --restart unless-stopped --name archlinux \
 #         --volume /var/run/docker.sock:/var/run/docker.sock \
 #         overshard/archlinux:latest
 #

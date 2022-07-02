@@ -14,7 +14,7 @@
 #     docker volume create --name bythewood-ssh
 #
 # Start container:
-#     docker run --detach --restart unless-stopped --name bythewood-container \
+#     docker run --detach --restart unless-stopped --name bythewood \
 #         --volume bythewood-code:/home/dev/code \
 #         --volume bythewood-ssh:/home/dev/.ssh \
 #         --volume /var/run/docker.sock:/var/run/docker.sock \

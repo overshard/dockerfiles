@@ -24,7 +24,7 @@ heredocs are widely supported and not just in labs I plan on using that.
 I sometimes setup a quick container to do test things on with:
 
     docker run -td --restart unless-stopped --name alpine \
-        -v "/C/Users/Isaac Bythewood:/home/isaac" -v "/var/run/docker.sock:/var/run/docker.sock" \
+        -v "/var/run/docker.sock:/var/run/docker.sock" \
         alpine ash
 
 Then you can enter it at anytime with:
@@ -37,9 +37,9 @@ Then you can enter it at anytime with:
 To copy data from a container to the host system while using docker volumes you
 can run something like this:
 
-    docker run --rm --volumes-from bythewood-container -v "${pwd}:/data" alpine \
+    docker run --rm --volumes-from bythewood -v "${pwd}:/data" alpine \
         tar --exclude .venv --exclude node_modules --exclude media --exclude db.sqlite3 \
-        -zcvf /data/bythewood-container-`date +%Y-%m-%d`.tar.gz /home/dev/.ssh /home/dev/code
+        -zcvf /data/bythewood-`date +%Y-%m-%d`.tar.gz /home/dev/.ssh /home/dev/code
 
 **NOTE:** Instead of using ${pwd} you can also use a full path, on Windows it'd
 look something like `"/C/Users/Isaac Bythewood/Backups:/data"`. The double
