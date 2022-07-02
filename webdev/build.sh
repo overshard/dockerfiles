@@ -4,7 +4,7 @@
 #   curl -o- https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/build.sh | sh
 
 
-docker build --tag webdev:latest https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/Dockerfile
+docker build --tag overshard/webdev:latest https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/Dockerfile
 
 docker rm --force bythewood-container
 docker run -d --restart unless-stopped --name bythewood-container \
