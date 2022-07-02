@@ -8,8 +8,9 @@
 #         https://raw.githubusercontent.com/overshard/dockerfiles/master/archlinux/Dockerfile
 #
 # Start container:
-#     docker run --detach --restart unless-stopped --name archlinux \
+#     docker run -dt --restart unless-stopped --name archlinux \
 #         --volume /var/run/docker.sock:/var/run/docker.sock \
+#         --volume "/C/Users/Isaac Bythewood:/home/isaac
 #         overshard/archlinux:latest
 #
 # Docker is included in this build so I can test docker stuff inside my
