@@ -27,3 +27,16 @@ can run something like this:
     docker run -it --rm --volumes-from bythewood-container -v ${pwd}:/data alpine \
         tar --exclude .venv --exclude node_modules \
         -zcvf /data/bythewood-container.tar.gz /home/dev/.ssh /home/dev/code
+
+
+# Quick container
+
+I sometimes setup a quick container to do test things on with:
+
+    docker run -td --restart unless-stopped --name alpine \
+        -v "/c/users/isaac bythewood:/home/isaac" -v "/var/run/docker.sock:/var/run/docker.sock" \
+        alpine ash
+
+Then you can enter it at anytime with:
+
+    docker exec -it alpine ash
