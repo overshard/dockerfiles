@@ -30,8 +30,7 @@ RUN sed -i 's/^NoExtract  = usr\/share\/man/#NoExtract  = usr\/share\/man/g' /et
 
 RUN pacman --sync --refresh --noconfirm \
         man-db man-pages git curl openssh neovim libwebp rsync whois ldns \
-        docker docker-compose \
-        chromium noto-fonts noto-fonts-extra noto-fonts-emoji
+        docker docker-compose
 
 
 # Set our system timezone to UTC to prevent errors
