@@ -9,8 +9,7 @@
 # path to your applications asgi file.
 #
 # You can run this with:
-#
-#   docker build --tag django:latest .
+#   docker build --tag overshard/django:latest .
 #   docker run -d -p 80:8000 -e DJANGO_SETTINGS_MODULE=project.settings.production \
 #     -v /srv/data:/data django:latest
 

@@ -1,4 +1,4 @@
-# archlinux-webdev
+# webdev
 #
 # Used for working on most of my website development projects, using a rolling
 # distro to have the latest packages to work with. I generally use this with the
@@ -6,18 +6,19 @@
 # exposed ports, the plugin will auto forward ports that my projects need.
 #
 # Build image:
-#     docker build -t archlinux-webdev:latest \
-#         https://raw.githubusercontent.com/overshard/dockerfiles/master/archlinux-webdev/Dockerfile
+#     docker build --tag overshard/webdev:latest \
+#         https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/Dockerfile
 #
 # Create volumes:
-#     docker volume create --name home-code
-#     docker volume create --name home-ssh
+#     docker volume create --name bythewood-code
+#     docker volume create --name bythewood-ssh
 #
 # Start container:
-#     docker run --detach --restart always --name home-container \
-#         --volume home-code:/home/dev/code --volume home-ssh:/home/dev/.ssh \
+#     docker run --detach --restart unless-stopped --name bythewood-container \
+#         --volume bythewood-code:/home/dev/code \
+#         --volume bythewood-ssh:/home/dev/.ssh \
 #         --volume /var/run/docker.sock:/var/run/docker.sock \
-#         alpinelinux-webdev:latest
+#         overshard/webdev:latest
 #
 # I use a couple of volumes to store my code and SSH keys to make rebuilds of
 # the container easy. I have scripts setup on my hosts to rebuild images, delete
@@ -26,9 +27,7 @@
 # Docker is included in this build so I can test docker stuff inside my
 # containers. Note that to get docker to function in a docker container you
 # need to use the host's docker and provide the docker.sock file from the host
-# to the container. This can be done with `--volume /var/run/docker.sock:/var/run/docker.sock`
-# on Linux/MacOS hosts and with `--volume //var/run/docker.sock:/var/run/docker.sock`
-# on Windows hosts.
+# to the container. This can be done with `--volume /var/run/docker.sock:/var/run/docker.sock`.
 #
 # The naming is so that I can make a container and volumes for each of my
 # clients and keep a separation of work.
@@ -102,7 +101,7 @@ RUN echo UTC > /etc/timezone
 
 RUN useradd -m -G wheel -s /bin/bash dev && \
     echo "dev:password" | chpasswd && \
-    echo "dev ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/dev
+    echo "dev ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/dev
 
 
 # Use our new user and an interactive shell to load .bashrc
@@ -141,9 +140,7 @@ RUN nvm install --lts=${NODE_VERSION} && \
     npm i -g \
         yarn \
         prettier \
-        import-sort \
         eslint \
-        gulp-cli \
         vercel \
         heroku
 

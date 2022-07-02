@@ -1,4 +1,4 @@
-# alpine-exim
+# exim
 #
 # I use this to run a simple exim SMTP server to send mail from my other docker
 # containers to the web. This isn't recommended for production since you're

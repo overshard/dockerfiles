@@ -1,6 +1,7 @@
 #!/bin/sh
+#
 # To run this without downloading the script, use:
-#   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock alpine ash -c "apk add --no-cache docker curl && curl -o- https://raw.githubusercontent.com/overshard/dockerfiles/master/archlinux-webdev/backup.sh | ash"
+#   curl -o- https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/backup.sh | sh
 
 
 docker run --rm --volumes-from bythewood-container -v "/C/Users/Isaac Bythewood/Backups:/data" alpine \
