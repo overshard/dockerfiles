@@ -160,6 +160,13 @@ RUN sudo ln -s `which heroku` /usr/sbin/heroku && \
 RUN curl -o- https://raw.githubusercontent.com/overshard/dotfiles/master/bootstrap.sh | bash
 
 
+# Add my volumes
+
+VOLUME /home/dev/.ssh
+
+VOLUME /home/dev/code
+
+
 # Run our supervisor services with CMD so we can override if it we want to
 
 CMD ["sudo", "/home/dev/.pyenv/shims/supervisord", "-c", "/etc/supervisord.conf"]

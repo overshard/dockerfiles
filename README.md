@@ -12,8 +12,18 @@ environments so that things like databases, caching, media storage, workers,
 and web hosts are split into their own containers.
 
 
-# Multiline
+## Multiline
 
 I don't like having a lot of files that I `COPY` around and prefer writing
 multiline echos and sed commands to create and adjust configuration files. When
 heredocs are widely supported and not just in labs I plan on using that.
+
+
+## Backup volumes
+
+To copy data from a container to the host system while using docker volumes you
+can run something like this:
+
+    docker run -it --rm --volumes-from bythewood-container -v ${pwd}:/data alpine \
+        tar --exclude .venv --exclude node_modules \
+        -zcvf /data/bythewood-container.tar.gz /home/dev/.ssh /home/dev/code
