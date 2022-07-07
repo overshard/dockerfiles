@@ -1,7 +1,8 @@
 #!/bin/sh
 #
 # To run this without downloading the script, use:
-#   curl -o- https://raw.githubusercontent.com/overshard/dockerfiles/master/build.sh | sh
+#   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock alpine \
+#     sh -c "apk add docker && curl -o- https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/build.sh | sh"
 
 
 docker build --tag overshard/webdev:latest https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/Dockerfile
