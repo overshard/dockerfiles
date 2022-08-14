@@ -54,7 +54,8 @@ RUN pacman --sync --refresh --noconfirm \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk python2 \
         postgresql postgresql-libs libxcrypt-compat \
-        redis
+        redis \
+        gdal
 
 
 # Setup postgresql
