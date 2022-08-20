@@ -61,3 +61,11 @@ can run something like this:
 **NOTE:** Instead of using ${pwd} you can also use a full path, on Windows it'd
 look something like `"/C/Users/Isaac Bythewood/Documents/Backups:/data"`. The
 double quotes are important to prevent errors and use spaces in the path.
+
+
+## Volume location on Windows
+
+You can easily get to docker volumes on Windows by typing the following in
+Explorer:
+
+    \\wsl$\docker-desktop-data\data\docker\volumes
