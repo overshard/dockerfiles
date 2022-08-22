@@ -23,18 +23,11 @@ COPY etc/periodic/daily/borg-autobackup /etc/periodic/daily/borg-autobackup
 
 RUN chmod +x /etc/periodic/daily/borg-autobackup
 
-RUN addgroup -S -g 1000 dev && \
-    adduser -S -h /data -s /sbin/nologin -u 1000 -G dev dev && \
-    chown dev:dev /data
-
-RUN mkdir -p /data/volumes && \
-    chown -R 1000:1000 /data/volumes && \
-    mkdir -p /data/backups && \
-    chown -R 1000:1000 /data/backups
+RUN mkdir -p /data && \
+    mkdir -p /data/volumes && \
+    mkdir -p /data/backups
 
 WORKDIR /data
-
-USER dev
 
 # Run crond with CMD
 CMD ["/usr/sbin/crond", "-f"]
