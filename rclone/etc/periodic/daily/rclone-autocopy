@@ -2,4 +2,5 @@
 # This script assumes that rclone has already been configured with the relevant
 # remotes used in it.
 
+cd /data/vannoppen-drive
 rclone --config="/data/vannoppen-drive/rclone.conf" copy vannoppen-drive: .
