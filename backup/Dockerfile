@@ -13,6 +13,16 @@
 #   --volume vannoppen-ssh:/data/volumes/vannoppen/ssh
 #   --volume vannoppen-code:/data/volumes/vannoppen/code
 #   overshard/backup:latest
+#
+# Notes:
+#   - If you don't already have it setup you'll need to initialize a borg repo
+#     in /data/backups. I use the following command:
+#       borg init -e none /data/backups
+#   - If you rebuild this container you'll need to reauthorize the borg repo by
+#     running any command on it like:
+#       borg list /data/backups
+#   - You can always enter the container and run borg commands manually with:
+#       docker exec -it backup sh
 
 
 FROM alpine:3.16
