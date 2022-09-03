@@ -12,6 +12,7 @@
 #   --volume bythewood-code:/data/volumes/bythewood/code
 #   --volume vannoppen-ssh:/data/volumes/vannoppen/ssh
 #   --volume vannoppen-code:/data/volumes/vannoppen/code
+#   --volume vannoppen-drive:/data/volumes/vannoppen/drive
 #   overshard/backup:latest
 #
 # Notes:
@@ -31,6 +32,7 @@
 #       --volume bythewood-code:/data/volumes/bythewood/code
 #       --volume vannoppen-ssh:/data/volumes/vannoppen/ssh
 #       --volume vannoppen-code:/data/volumes/vannoppen/code
+#       --volume vannoppen-drive:/data/volumes/vannoppen/drive
 #       overshard/backup:latest sh
 #     From here you can run standard borg commands. I'll general use something
 #     like this to extract the latest archive that I find with
