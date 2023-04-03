@@ -52,7 +52,7 @@ RUN pacman --sync --refresh --noconfirm \
         man-db man-pages sudo git curl openssh neovim libwebp rsync whois ldns tmux nmap \
         docker docker-compose \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
-        base-devel openssl zlib xz tk python2 \
+        base-devel openssl zlib xz tk \
         postgresql postgresql-libs libxcrypt-compat \
         redis \
         gdal
