@@ -18,8 +18,8 @@
 #         --volume bythewood-code:/home/dev/code \
 #         --volume bythewood-ssh:/home/dev/.ssh \
 #         --volume /var/run/docker.sock:/var/run/docker.sock \
-#         --expose 3000 \
-#         --expose 8000 \
+#         --publish 3000:3000 \
+#         --publish 8000:8000 \
 #         overshard/webdev:latest
 #
 # I use a couple of volumes to store my code and SSH keys to make rebuilds of
