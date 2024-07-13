@@ -48,12 +48,14 @@ RUN sed -i 's/^NoExtract  = usr\/share\/man/#NoExtract  = usr\/share\/man/g' /et
 
 # Install packages
 
-RUN pacman --sync --refresh --noconfirm \
+RUN pacman --sync --refresh --sysupgrade --noconfirm
+
+RUN pacman --noconfirm \
         man-db man-pages sudo git curl openssh neovim libwebp rsync whois ldns tmux nmap \
         docker docker-compose \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
-        postgresql postgresql-libs libxcrypt-compat icu \
+        postgresql postgresql-libs libxcrypt-compat \
         redis \
         gdal
 
