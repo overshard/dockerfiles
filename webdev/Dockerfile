@@ -53,7 +53,7 @@ RUN pacman --sync --refresh --noconfirm \
         docker docker-compose \
         chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
         base-devel openssl zlib xz tk \
-        postgresql postgresql-libs libxcrypt-compat \
+        postgresql postgresql-libs libxcrypt-compat icu \
         redis \
         gdal
 
