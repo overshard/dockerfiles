@@ -14,12 +14,10 @@
 #     docker volume create --name bythewood-ssh
 #
 # Start container:
-#     docker run --detach --restart unless-stopped --name bythewood \
+#     docker run --detach --restart unless-stopped --name bythewood-webdev \
 #         --volume bythewood-code:/home/dev/code \
 #         --volume bythewood-ssh:/home/dev/.ssh \
 #         --volume /var/run/docker.sock:/var/run/docker.sock \
-#         --publish 3000:3000 \
-#         --publish 8000:8000 \
 #         overshard/webdev:latest
 #
 # I use a couple of volumes to store my code and SSH keys to make rebuilds of
@@ -136,9 +134,6 @@ RUN pyenv install ${PYTHON_VERSION} && \
     pip install --upgrade \
         pip \
         pipenv \
-        black \
-        isort \
-        flake8 \
         supervisor
 
 
@@ -150,15 +145,7 @@ RUN nvm install --lts=${NODE_VERSION} && \
     npm i -g \
         yarn \
         prettier \
-        eslint \
-        vercel \
-        heroku
-
-
-# Add heroku to sbin so we can continue using it while using `nvm use` on a
-# project with a different node version. Also add the heroku-builds plugin.
-
-RUN sudo ln -s `which heroku` /usr/sbin/heroku
+        eslint
 
 
 # Add my dotfiles
