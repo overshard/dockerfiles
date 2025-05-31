@@ -10,9 +10,8 @@
 #   --volume "/C/Users/Isaac Bythewood/Documents/Backups:/data/backups"
 #   --volume bythewood-ssh:/data/volumes/bythewood/ssh
 #   --volume bythewood-code:/data/volumes/bythewood/code
-#   --volume vannoppen-ssh:/data/volumes/vannoppen/ssh
-#   --volume vannoppen-code:/data/volumes/vannoppen/code
-#   --volume vannoppen-drive:/data/volumes/vannoppen/drive
+#   --volume craftmaster-ssh:/data/volumes/craftmaster/ssh
+#   --volume craftmaster-code:/data/volumes/craftmaster/code
 #   overshard/backup:latest
 #
 # Notes:
@@ -30,9 +29,8 @@
 #       --volume "/C/Users/Isaac Bythewood/Documents/Backups:/data/backups"
 #       --volume bythewood-ssh:/data/volumes/bythewood/ssh
 #       --volume bythewood-code:/data/volumes/bythewood/code
-#       --volume vannoppen-ssh:/data/volumes/vannoppen/ssh
-#       --volume vannoppen-code:/data/volumes/vannoppen/code
-#       --volume vannoppen-drive:/data/volumes/vannoppen/drive
+#       --volume craftmaster-ssh:/data/volumes/craftmaster/ssh
+#       --volume craftmaster-code:/data/volumes/craftmaster/code
 #       overshard/backup:latest sh
 #     From here you can run standard borg commands. I'll general use something
 #     like this to extract the latest archive that I find with
