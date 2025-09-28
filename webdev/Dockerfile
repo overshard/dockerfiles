@@ -35,8 +35,8 @@
 
 FROM archlinux:latest
 
-ENV NODE_VERSION=fermium
-ENV PYTHON_VERSION=3.10.5
+ENV NODE_VERSION=jod
+ENV PYTHON_VERSION=3.12.11
 
 
 # Allow for extracting man pages before installing everything
