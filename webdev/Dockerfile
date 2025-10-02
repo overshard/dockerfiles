@@ -6,19 +6,14 @@
 # exposed ports, the plugin will auto forward ports that my projects need.
 #
 # Build image:
-#     docker build --tag overshard/webdev:latest \
-#         https://raw.githubusercontent.com/overshard/dockerfiles/master/webdev/Dockerfile
+#     docker build --tag overshard/webdev:latest .
 #
 # Create volumes:
 #     docker volume create --name bythewood-code
 #     docker volume create --name bythewood-ssh
 #
 # Start container:
-#     docker run --detach --restart unless-stopped --name bythewood-webdev \
-#         --volume bythewood-code:/home/dev/code \
-#         --volume bythewood-ssh:/home/dev/.ssh \
-#         --volume /var/run/docker.sock:/var/run/docker.sock \
-#         overshard/webdev:latest
+#     docker run --detach --restart unless-stopped --name bythewood-webdev --volume bythewood-code:/home/dev/code --volume bythewood-ssh:/home/dev/.ssh --volume /var/run/docker.sock:/var/run/docker.sock overshard/webdev:latest
 #
 # I use a couple of volumes to store my code and SSH keys to make rebuilds of
 # the container easy. I have scripts setup on my hosts to rebuild images, delete
@@ -33,133 +28,81 @@
 # clients and keep a separation of work.
 
 
-FROM archlinux:latest
+FROM ubuntu:24.04
 
-ENV NODE_VERSION=jod
-ENV PYTHON_VERSION=3.12.11
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=UTC
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        # Dev tools
+        curl git rsync neovim openssh-client tmux whois nmap \
+        # System essentials
+        tzdata ca-certificates sudo \
+        # Build tools
+        build-essential \
+        # Python
+        python3 python3-pip python3-venv pipenv \
+        # Database and caching
+        postgresql redis-server \
+        # Docker
+        docker.io docker-compose-v2 \
+        # Process management
+        supervisor && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    mkdir -p /root/.local/share/corepack/shims && \
+    corepack enable && \
+    corepack prepare yarn@stable --activate && \
+    rm -rf /var/lib/apt/lists/*
 
-# Allow for extracting man pages before installing everything
+RUN printf '%s\n' \
+    'bind 127.0.0.1' \
+    'protected-mode yes' \
+    'port 6379' \
+    'supervised no' \
+    'daemonize no' \
+    'logfile ""' \
+    'dir /var/lib/redis' \
+    'save ""' \
+    > /etc/redis/redis.conf && \
+    mkdir -p /var/lib/redis && \
+    chown redis:redis /var/lib/redis
 
-RUN sed -i 's/^NoExtract  = usr\/share\/man/#NoExtract  = usr\/share\/man/g' /etc/pacman.conf
+RUN ln -snf /usr/share/zoneinfo/UTC /etc/localtime && echo "UTC" > /etc/timezone
 
+RUN service postgresql start && \
+    sudo -u postgres createuser -s dev && \
+    service postgresql stop
 
-# Install packages
+RUN printf '%s\n' \
+    '[supervisord]' \
+    'pidfile=/run/supervisord.pid' \
+    'user=root' \
+    'nodaemon=true' \
+    'logfile=/dev/null' \
+    'logfile_maxbytes=0' \
+    '' \
+    '[program:postgresql]' \
+    'command=/usr/lib/postgresql/16/bin/postgres -D /var/lib/postgresql/16/main -c config_file=/etc/postgresql/16/main/postgresql.conf' \
+    'autostart=true' \
+    'user=postgres' \
+    'stdout_logfile=/dev/fd/1' \
+    'stdout_logfile_maxbytes=0' \
+    'redirect_stderr=true' \
+    '' \
+    '[program:redis]' \
+    'command=/usr/bin/redis-server /etc/redis/redis.conf' \
+    'autostart=true' \
+    'user=redis' \
+    'stdout_logfile=/dev/fd/1' \
+    'stdout_logfile_maxbytes=0' \
+    'redirect_stderr=true' \
+    > /etc/supervisord.conf
 
-RUN pacman --sync --refresh --sysupgrade --noconfirm \
-        man-db man-pages sudo git curl openssh neovim libwebp rsync whois ldns tmux nmap \
-        docker docker-compose \
-        chromium noto-fonts noto-fonts-extra noto-fonts-emoji \
-        base-devel openssl zlib xz tk \
-        postgresql postgresql-libs libxcrypt-compat \
-        redis \
-        gdal
-
-
-# Setup postgresql
-
-RUN sudo -iu postgres initdb -D /var/lib/postgres/data && \
-    mkdir -p /run/postgresql && \
-    chown postgres:postgres /run/postgresql && \
-    sudo -iu postgres pg_ctl start -D /var/lib/postgres/data && \
-    sudo -iu postgres createuser -s dev && \
-    sudo -iu postgres pg_ctl stop -D /var/lib/postgres/data
-
-
-# Setup redis, this mostly is used to fix an error report, I really don't care
-# if redis has issues writing since this image is for development
-
-RUN sed -i 's/stop-writes-on-bgsave-error yes/stop-writes-on-bgsave-error no/g' /etc/redis/redis.conf
-
-
-# Set up supervisor to run our services
-
-RUN echo $'# supervisor\n\
-[supervisord]\n\
-pidfile=/run/supervisord.pid\n\
-user=root\n\
-nodaemon=true\n\
-logfile=/dev/null\n\
-logfile_maxbytes=0\n\
-# postgresql\n\
-[program:postgresql]\n\
-command=/usr/bin/postgres -D /var/lib/postgres/data\n\
-autostart=true\n\
-user=postgres\n\
-stdout_logfile=/dev/fd/1\n\
-stdout_logfile_maxbytes=0\n\
-redirect_stderr=true\n\
-# redis\n\
-[program:redis]\n\
-command=/usr/bin/redis-server /etc/redis/redis.conf\n\
-autostart=true\n\
-user=redis\n\
-stdout_logfile=/dev/fd/1\n\
-stdout_logfile_maxbytes=0\n\
-redirect_stderr=true\n\
-' >> /etc/supervisord.conf && chmod 600 /etc/supervisord.conf
-
-
-# Set our system timezone to UTC to prevent errors
-
-RUN echo UTC > /etc/timezone
-
-
-# Create a user
-
-RUN useradd -m -G wheel -s /bin/bash dev && \
-    echo "dev:password" | chpasswd && \
+RUN useradd -m -G sudo,docker,postgres,redis -s /bin/bash dev && \
     echo "dev ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/dev
-
-
-# Use our new user and an interactive shell to load .bashrc
-
+WORKDIR /home/dev
 USER dev
 
-SHELL ["/bin/bash", "-l", "-i", "-c"]
-
-
-# Install python and system packages
-
-RUN curl -o- https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-
-RUN echo $'# pyenv\n\
-export PYENV_ROOT="$HOME/.pyenv"\n\
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"\n\
-eval "$(pyenv init -)"\n\
-' >> ~/.bashrc
-
-RUN pyenv install ${PYTHON_VERSION} && \
-    pyenv global ${PYTHON_VERSION} && \
-    pip install --upgrade \
-        pip \
-        pipenv \
-        supervisor
-
-
-# Install node and system packages
-
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-
-RUN nvm install --lts=${NODE_VERSION} && \
-    npm i -g \
-        yarn \
-        prettier \
-        eslint
-
-
-# Add my dotfiles
-
-RUN curl -o- https://raw.githubusercontent.com/overshard/dotfiles/master/bootstrap.sh | bash
-
-
-# Add my volumes
-
-VOLUME /home/dev/.ssh
-
-VOLUME /home/dev/code
-
-
-# Run our supervisor services with CMD so we can override if it we want to
-
-CMD ["sudo", "/home/dev/.pyenv/shims/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["sudo", "/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
