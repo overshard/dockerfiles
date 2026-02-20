@@ -2,7 +2,7 @@
 #
 # Used for working on most of my website development projects, using a rolling
 # distro to have the latest packages to work with. I generally use this with the
-# "Remote - Containers" plugin from Microsoft on VS Code hence why there are no
+# "Dev Containers" plugin from Microsoft on VS Code hence why there are no
 # exposed ports, the plugin will auto forward ports that my projects need.
 #
 # Build image:
@@ -42,7 +42,7 @@ RUN apt-get update && \
         # Build tools
         build-essential \
         # Python
-        python3 python3-pip python3-venv pipenv \
+        python3 python3-pip python3-venv \
         # Database and caching
         postgresql redis-server \
         # Docker
@@ -51,6 +51,7 @@ RUN apt-get update && \
         supervisor && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
+    curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh && \
     mkdir -p /root/.local/share/corepack/shims && \
     corepack enable && \
     corepack prepare yarn@stable --activate && \
